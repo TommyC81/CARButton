@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////
 /*
-  CARButton.h - Arduino Library to simplify working with buttons.
-  Created by Tommy Carlsson.
+	CARButton.h - Arduino Library to simplify working with buttons.
+	Created by Tommy Carlsson.
 */
 /////////////////////////////////////////////////////////////////
 
@@ -47,7 +47,7 @@ class CARButton {
     byte _pressedState;
     byte _clickCount = 0;
     elapsedMillis _elapsedMillis_sincePressed;
-    elapsedMillis elapsedMillis_sinceLongclick;
+    elapsedMillis _elapsedMillis_sinceLongclick;
     unsigned int _timePressedMs = 0;
     byte _debounceTimeMs;
     bool _pressedTriggered = false;

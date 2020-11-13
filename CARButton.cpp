@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////
 /*
-  CARButton.cpp - Arduino Library to simplify working with buttons.
-  Created by Tommy Carlsson.
+	CARButton.cpp - Arduino Library to simplify working with buttons.
+	Created by Tommy Carlsson.
 */
 /////////////////////////////////////////////////////////////////
 
@@ -18,79 +18,62 @@ CARButton::CARButton(byte p_inputPin, byte p_buttonMode /* = INPUT_PULLUP */, bo
 	pinMode(p_inputPin, p_buttonMode);
 }
 
-/////////////////////////////////////////////////////////////////
-
 bool CARButton::operator==(CARButton &rhs) {
 	return (this==&rhs);
 }
-
-/////////////////////////////////////////////////////////////////
 
 void CARButton::setDebounceTime(byte ms) {
 	_debounceTimeMs = ms;
 }
 
-/////////////////////////////////////////////////////////////////
-
 void CARButton::setButtonHandler(CallbackFunction f) {
 	_buttonCallback = f; 
 }
-
-/////////////////////////////////////////////////////////////////
 
 boolean CARButton::isPressed() {
 	return (_currentState == _pressedState);
 }
 
-/////////////////////////////////////////////////////////////////
-
 boolean CARButton::isPressedRaw() {
 	return (digitalRead(_inputPin) == _pressedState);
 }
-
-/////////////////////////////////////////////////////////////////
 
 byte CARButton::getNumberOfClicks() {
 	return _clickCount;
 }
 
-/////////////////////////////////////////////////////////////////
-
 unsigned int CARButton::wasPressedFor() {
 	return _timePressedMs;
 }
 
-/////////////////////////////////////////////////////////////////
-
 void CARButton::loop() {
 	_previousState = _currentState;
 	_currentState = digitalRead(_inputPin);
-
 	// is button _pressedState?
 	if (_currentState == _pressedState) {
 		// was the button _pressedState now?
 		if (_previousState != _pressedState) {
 			_elapsedMillis_sincePressed = 0;
-			elapsedMillis_sinceLongclick = 0;
+			_elapsedMillis_sinceLongclick = 0;
 			_pressedTriggered = false;
-			longclick_detected = false;
+			_longclickDetected = false;
 		// trigger _pressedState event (after debounce has passed)
 		} else if (!_pressedTriggered && _elapsedMillis_sincePressed >= _debounceTimeMs) {
 			_pressedTriggered = true;
 			_clickCount++;
 			// trigger _pressedState
 			_buttonCallback(*this, BUTTON_PRESSED);
-		// set longclick_detected after button has been _pressedState for LONGCLICK_MS
+		// set _longclickDetected after button has been _pressedState for LONGCLICK_MS
 		// then repeat the longclick events
 		} else if (_pressedTriggered && _clickCount == 1) {
-			if (!longclick_detected && _elapsedMillis_sincePressed >= LONGCLICK_MS) {
+			if (!_longclickDetected && _elapsedMillis_sincePressed >= LONGCLICK_MS) {
 				_timePressedMs = _elapsedMillis_sincePressed;
-				longclick_detected = true;
-				elapsedMillis_sinceLongclick = 0;
+				_longclickDetected = true;
+				_elapsedMillis_sinceLongclick = 0;
 				_buttonCallback(*this, BUTTON_LONG_FIRST);
-			} else if (longclick_detected && elapsedMillis_sinceLongclick >= LONGCLICK_REPEAT_MS) {
+			} else if (_longclickDetected && _elapsedMillis_sinceLongclick >= LONGCLICK_REPEAT_MS) {
 				_timePressedMs = _elapsedMillis_sincePressed;
-				elapsedMillis_sinceLongclick = 0;
+				_elapsedMillis_sinceLongclick = 0;
 				_buttonCallback(*this, BUTTON_LONG_REPEAT);
 			}
 		}
@@ -101,10 +84,10 @@ void CARButton::loop() {
 			_timePressedMs = _elapsedMillis_sincePressed;
 			// was it the end of a longclick? (preceeds any other clicks/released events)
 			// however, once multiple clicks have started, don't change to a long click
-			if (_clickCount == 1 && longclick_detected) {
+			if (_clickCount == 1 && _longclickDetected) {
 				// trigger long-click
 				_buttonCallback(*this, BUTTON_LONG_FINISH);
-				longclick_detected = false;
+				_longclickDetected = false;
 				_pressedTriggered = false;
 				_clickCount = 0;
 			} else {
@@ -120,13 +103,11 @@ void CARButton::loop() {
 	}
 }
 
-/////////////////////////////////////////////////////////////////
-
 void CARButton::reset() {
 	_elapsedMillis_sincePressed = 0;
-	elapsedMillis_sinceLongclick = 0;
+	_elapsedMillis_sinceLongclick = 0;
 	_pressedTriggered = false;
-	longclick_detected = false;
+	_longclickDetected = false;
 	_clickCount = 0;
 	_buttonCallback = NULL;
 }
