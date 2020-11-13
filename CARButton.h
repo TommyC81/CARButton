@@ -18,16 +18,16 @@
 /////////////////////////////////////////////////////////////////
 
 #ifndef DEBOUNCE_MS
-	#define DEBOUNCE_MS			50
+	#define DEBOUNCE_MS 50
 #endif
 #ifndef LONGCLICK_MS 
-	#define LONGCLICK_MS		250
+	#define LONGCLICK_MS 250
 #endif
 #ifndef LONGCLICK_REPEAT_MS 
-	#define LONGCLICK_REPEAT_MS	250
+	#define LONGCLICK_REPEAT_MS 250
 #endif
 #ifndef MULTICLICK_MS
-	#define MULTICLICK_MS		300
+	#define MULTICLICK_MS 300
 #endif
 
 #define BUTTON_PRESSED 0
