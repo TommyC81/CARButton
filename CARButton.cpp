@@ -84,8 +84,8 @@ void CARButton::loop() {
       // trigger pressed_state
       button_cb(*this, BUTTON_PRESSED);
       
-      // set longclick_detected after button has been pressed_state for LONGCLICK_MS
-      // then repeat
+    // set longclick_detected after button has been pressed_state for LONGCLICK_MS
+    // then repeat the longclick events
     } else if (pressed_triggered && click_count == 1) {
       if (!longclick_detected && elapsedMillis_since_pressed >= LONGCLICK_MS) {
         time_pressed_ms = elapsedMillis_since_pressed;
@@ -97,16 +97,14 @@ void CARButton::loop() {
         elapsedMillis_since_longclick = 0;
         button_cb(*this, BUTTON_LONG_REPEAT);
       }
-	}
-
-  // is button not pressed_state?
+    }
+  
+  // was pressed_triggered (and button is no longer in pressed_state)?
   } else if (pressed_triggered) {
     // was the button released now?
     if (prev_state == pressed_state) {
       time_pressed_ms = elapsedMillis_since_pressed;
-      // trigger release
-      button_cb(*this, BUTTON_RELEASED);
-      // was it a longclick? (preceeds multi clicks)
+      // was it the end of a longclick? (preceeds any other clicks/released events)
       // however, once multiple clicks have started, don't change to a long click
       if (click_count == 1 && longclick_detected) {
         // trigger long-click
@@ -114,6 +112,9 @@ void CARButton::loop() {
         longclick_detected = false;
         pressed_triggered = false;
         click_count = 0;
+      } else {
+        // trigger release if it was not the end of a longclick
+        button_cb(*this, BUTTON_CLICK_RELEASED);
       }
     } else if (click_count > 0 && elapsedMillis_since_pressed >= MULTICLICK_MS) {
       // trigger click
