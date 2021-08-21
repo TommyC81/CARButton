@@ -60,7 +60,6 @@ class CARButton {
   public:
     CARButton(byte attachTo, byte buttonMode = INPUT_PULLUP, boolean activeLow = true, byte debounceTimeout = DEBOUNCE_MS);
     void setDebounceTime(byte ms);
-	byte getDebounceTime();
     void reset();
     
     void setButtonHandler(CallbackFunction f);

@@ -26,10 +26,6 @@ void CARButton::setDebounceTime(byte ms) {
 	_debounceTimeMs = ms;
 }
 
-byte CARButton::getDebounceTime() {
-	return _debounceTimeMs;
-}
-
 void CARButton::setButtonHandler(CallbackFunction f) {
 	_buttonCallback = f; 
 }
